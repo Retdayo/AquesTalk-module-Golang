@@ -1,7 +1,7 @@
 package main
 
 const (
-	AQUESTALK_BASE_DIR = "../AquesTalk/lib64" // lib64 のみを見る
+	AQUESTALK_BASE_DIR = "../AquesTalk/lib64"
 	DEV_KEY            = "YOUR_DEV_KEY"
 
 	DEFAULT_SPEECH_SPEED   = 100

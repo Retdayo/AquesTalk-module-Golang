@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"aquestalk"
+	"github.com/retdayo/AquesTalk-module-Golang"
 )
 
 func readIntOrDefault(scanner *bufio.Scanner, prompt string, def int) int {
@@ -26,7 +26,6 @@ func readIntOrDefault(scanner *bufio.Scanner, prompt string, def int) int {
 	return v
 }
 
-// コンソールで選択
 func selectVoice(voices []aquestalk.Voice) (aquestalk.Voice, error) {
 	if len(voices) == 0 {
 		return aquestalk.Voice{}, fmt.Errorf("no voices found")
@@ -49,7 +48,7 @@ func selectVoice(voices []aquestalk.Voice) (aquestalk.Voice, error) {
 }
 
 func main() {
-	voices, err := aquestalk.ListVoices(AQUESTALK_BASE_DIR)
+	voices, err := aquestalk.Voices(AQUESTALK_BASE_DIR)
 	if err != nil {
 		panic(err)
 	}
@@ -61,7 +60,7 @@ func main() {
 
 	fmt.Println("選択された声種:", voice.Name)
 
-	aq, err := aquestalk.LoadAquesTalk(voice.Path, DEV_KEY)
+	aq, err := aquestalk.Open(voice.Path, DEV_KEY)
 	if err != nil {
 		panic(err)
 	}
@@ -88,18 +87,12 @@ func main() {
 		speechSpeed := readIntOrDefault(scanner, "読み上げ速度", DEFAULT_SPEECH_SPEED)
 		playbackSpeed := readIntOrDefault(scanner, "再生速度(音程)", DEFAULT_PLAYBACK_SPEED)
 
-		normalized := aquestalk.Normalize(text)
+		normalized := aquestalk.ToHiragana(text)
 		fmt.Println("変換後テキスト:", normalized)
 
-		wav, err := aq.Synthe(normalized, speechSpeed)
+		wav, err := aq.SpeakWithPlayback(normalized, speechSpeed, playbackSpeed)
 		if err != nil {
 			fmt.Println("音声生成失敗:", err)
-			continue
-		}
-
-		wav, err = aquestalk.ApplyPlaybackSpeed(wav, playbackSpeed)
-		if err != nil {
-			fmt.Println("音程変更失敗:", err)
 			continue
 		}
 

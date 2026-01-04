@@ -5,9 +5,11 @@ import (
 	"errors"
 )
 
-// 再生速度変更（= 音程 / WAVヘッダ）
-// playbackSpeed: 100=等速, 130=1.3倍（高音・短く）
 func ApplyPlaybackSpeed(wav []byte, playbackSpeed int) ([]byte, error) {
+	return ChangePlaybackSpeed(wav, playbackSpeed)
+}
+
+func ChangePlaybackSpeed(wav []byte, playbackSpeed int) ([]byte, error) {
 	if len(wav) < 44 {
 		return nil, errors.New("invalid wav: too short")
 	}
@@ -17,7 +19,6 @@ func ApplyPlaybackSpeed(wav []byte, playbackSpeed int) ([]byte, error) {
 
 	ratio := float64(playbackSpeed) / 100.0
 
-	// WAVヘッダ: 24..27 sampleRate, 28..31 byteRate
 	sampleRate := binary.LittleEndian.Uint32(wav[24:28])
 	byteRate := binary.LittleEndian.Uint32(wav[28:32])
 

@@ -63,7 +63,7 @@ type AquesTalk struct {
     setKey C.AquesTalk_SetDevKey_t
 }
 
-func LoadAquesTalk(libPath, devKey string) (*AquesTalk, error) {
+func Open(libPath, devKey string) (*AquesTalk, error) {
     cpath := C.CString(libPath)
     defer C.free(unsafe.Pointer(cpath))
 
@@ -92,6 +92,10 @@ func LoadAquesTalk(libPath, devKey string) (*AquesTalk, error) {
     }, nil
 }
 
+func LoadAquesTalk(libPath, devKey string) (*AquesTalk, error) {
+	return Open(libPath, devKey)
+}
+
 func toCP932Bytes(s string) ([]byte, error) {
     enc := japanese.ShiftJIS.NewEncoder()
     out, _, err := transform.String(enc, s)
@@ -101,7 +105,7 @@ func toCP932Bytes(s string) ([]byte, error) {
     return []byte(out), nil
 }
 
-func (a *AquesTalk) Synthe(text string, speechSpeed int) ([]byte, error) {
+func (a *AquesTalk) Speak(text string, speechSpeed int) ([]byte, error) {
     sjis, err := toCP932Bytes(text)
     if err != nil {
         return nil, err
@@ -122,4 +126,20 @@ func (a *AquesTalk) Synthe(text string, speechSpeed int) ([]byte, error) {
     wav := C.GoBytes(ptr, size)
     C.call_free(a.free, ptr)
     return wav, nil
+}
+
+func (a *AquesTalk) Synthe(text string, speechSpeed int) ([]byte, error) {
+    return a.Speak(text, speechSpeed)
+}
+
+func (a *AquesTalk) SpeakWithPlayback(text string, speechSpeed int, playbackSpeed int) ([]byte, error) {
+    wav, err := a.Speak(text, speechSpeed)
+    if err != nil {
+        return nil, err
+    }
+    return ChangePlaybackSpeed(wav, playbackSpeed)
+}
+
+func (a *AquesTalk) SyntheWithPlaybackSpeed(text string, speechSpeed int, playbackSpeed int) ([]byte, error) {
+    return a.SpeakWithPlayback(text, speechSpeed, playbackSpeed)
 }

@@ -6,14 +6,12 @@ import (
 	"sort"
 )
 
-// 声種情報
 type Voice struct {
-	Name string // フォルダ名（f1, m1 など）
-	Path string // libAquesTalk.so のフルパス
+	Name string
+	Path string
 }
 
-// lib64/ 以下から声種を列挙
-func ListVoices(baseDir string) ([]Voice, error) {
+func Voices(baseDir string) ([]Voice, error) {
 	entries, err := os.ReadDir(baseDir)
 	if err != nil {
 		return nil, err
@@ -41,4 +39,8 @@ func ListVoices(baseDir string) ([]Voice, error) {
 	})
 
 	return voices, nil
+}
+
+func ListVoices(baseDir string) ([]Voice, error) {
+	return Voices(baseDir)
 }

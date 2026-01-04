@@ -1,4 +1,4 @@
-module aquestalk
+module github.com/retdayo/AquesTalk-module-Golang
 
 go 1.24.0
 
