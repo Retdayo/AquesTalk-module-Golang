@@ -1,0 +1,15 @@
+# Go
+/bin/
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Output
+out.wav
+
+# Editor/OS
+.vscode/
+.DS_Store
